@@ -1,0 +1,427 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>MA OS V2</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:black;
+color:white;
+overflow:hidden;
+}
+
+/* BOOT */
+
+#boot{
+position:absolute;
+width:100%;
+height:100%;
+background:black;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+#logo{
+font-size:70px;
+letter-spacing:10px;
+}
+
+.spinner{
+margin-top:40px;
+width:40px;
+height:40px;
+border:4px solid #555;
+border-top:4px solid white;
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg)}
+100%{transform:rotate(360deg)}
+}
+
+/* LOGIN */
+
+#login{
+display:none;
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#1e1e2f;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+#login input{
+margin:5px;
+padding:8px;
+}
+
+/* DESKTOP */
+
+#desktop{
+display:none;
+background:#1e1e2f;
+width:100%;
+height:100%;
+}
+
+/* ICONS */
+
+.icon{
+width:80px;
+text-align:center;
+margin:20px;
+cursor:pointer;
+display:inline-block;
+}
+
+/* TASKBAR */
+
+#taskbar{
+position:fixed;
+bottom:0;
+width:100%;
+height:40px;
+background:#111;
+display:flex;
+align-items:center;
+}
+
+#start{
+background:#222;
+padding:8px 15px;
+cursor:pointer;
+}
+
+#clock{
+margin-left:auto;
+margin-right:10px;
+}
+
+/* START MENU */
+
+#startMenu{
+position:fixed;
+bottom:40px;
+left:0;
+background:#222;
+padding:10px;
+display:none;
+}
+
+/* WINDOWS */
+
+.window{
+position:absolute;
+top:120px;
+left:120px;
+background:#eee;
+color:black;
+width:450px;
+display:none;
+border-radius:6px;
+box-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+
+.titlebar{
+background:#333;
+color:white;
+padding:6px;
+display:flex;
+justify-content:space-between;
+cursor:move;
+}
+
+.content{
+padding:10px;
+height:250px;
+overflow:auto;
+}
+
+textarea{
+width:100%;
+height:150px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- BOOT -->
+
+<div id="boot">
+
+<div id="logo">MA</div>
+
+<div class="spinner"></div>
+
+</div>
+
+<!-- LOGIN -->
+
+<div id="login">
+
+<h2>MA OS Login</h2>
+
+<input id="user" placeholder="Username">
+<input id="pass" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<!-- DESKTOP -->
+
+<div id="desktop">
+
+<div class="icon" onclick="openApp('explorer')">??<div>Files</div></div>
+<div class="icon" onclick="openApp('notepad')">??<div>Notepad</div></div>
+<div class="icon" onclick="openApp('browser')">??<div>Browser</div></div>
+
+</div>
+
+<!-- TASKBAR -->
+
+<div id="taskbar">
+
+<div id="start" onclick="toggleStart()">MA</div>
+
+<div id="clock"></div>
+
+</div>
+
+<!-- START MENU -->
+
+<div id="startMenu">
+
+<button onclick="openApp('explorer')">File Explorer</button><br>
+<button onclick="openApp('notepad')">Notepad</button><br>
+<button onclick="openApp('browser')">Browser</button>
+
+</div>
+
+<!-- EXPLORER -->
+
+<div id="explorer" class="window">
+
+<div class="titlebar">
+<span>File Explorer</span>
+<button onclick="closeApp('explorer')">X</button>
+</div>
+
+<div class="content" id="fileList"></div>
+
+</div>
+
+<!-- NOTEPAD -->
+
+<div id="notepad" class="window">
+
+<div class="titlebar">
+<span>Notepad</span>
+<button onclick="closeApp('notepad')">X</button>
+</div>
+
+<div class="content">
+
+<textarea id="note"></textarea>
+
+<br>
+
+<button onclick="saveNote()">Save</button>
+<button onclick="loadNote()">Load</button>
+
+</div>
+
+</div>
+
+<!-- BROWSER -->
+
+<div id="browser" class="window">
+
+<div class="titlebar">
+<span>Browser</span>
+<button onclick="closeApp('browser')">X</button>
+</div>
+
+<div class="content">
+
+<input id="url" placeholder="example.com">
+<button onclick="go()">Go</button>
+
+</div>
+
+</div>
+
+<script>
+
+/* BOOT ? LOGIN */
+
+setTimeout(()=>{
+
+document.getElementById("boot").style.display="none"
+document.getElementById("login").style.display="flex"
+
+},3500)
+
+/* LOGIN */
+
+function login(){
+
+let u=document.getElementById("user").value
+let p=document.getElementById("pass").value
+
+if(u==="admin" && p==="1234"){
+
+document.getElementById("login").style.display="none"
+document.getElementById("desktop").style.display="block"
+
+}else{
+
+alert("Wrong login")
+
+}
+
+}
+
+/* CLOCK */
+
+setInterval(()=>{
+
+let d=new Date()
+
+document.getElementById("clock").innerHTML=
+d.getHours()+":"+("0"+d.getMinutes()).slice(-2)
+
+},1000)
+
+/* START MENU */
+
+function toggleStart(){
+
+let m=document.getElementById("startMenu")
+
+m.style.display=m.style.display=="block"?"none":"block"
+
+}
+
+/* WINDOWS */
+
+function openApp(id){
+
+let w=document.getElementById(id)
+
+w.style.display="block"
+
+drag(w)
+
+}
+
+function closeApp(id){
+
+document.getElementById(id).style.display="none"
+
+}
+
+/* FILE STORAGE */
+
+let files=JSON.parse(localStorage.getItem("ma_files")||"[]")
+
+function renderFiles(){
+
+let list=document.getElementById("fileList")
+
+list.innerHTML=""
+
+files.forEach(f=>{
+
+let div=document.createElement("div")
+
+div.innerHTML="?? "+f.name
+
+list.appendChild(div)
+
+})
+
+}
+
+renderFiles()
+
+/* NOTEPAD */
+
+function saveNote(){
+
+let txt=document.getElementById("note").value
+
+files.push({name:"note",data:txt})
+
+localStorage.setItem("ma_files",JSON.stringify(files))
+
+alert("Saved")
+
+}
+
+function loadNote(){
+
+let f=files.find(x=>x.name=="note")
+
+if(f) document.getElementById("note").value=f.data
+
+}
+
+/* BROWSER */
+
+function go(){
+
+let url=document.getElementById("url").value
+
+window.open("https://"+url)
+
+}
+
+/* DRAG WINDOWS */
+
+function drag(win){
+
+let bar=win.querySelector(".titlebar")
+
+bar.onmousedown=function(e){
+
+let x=e.clientX-win.offsetLeft
+let y=e.clientY-win.offsetTop
+
+document.onmousemove=function(e){
+
+win.style.left=e.clientX-x+"px"
+win.style.top=e.clientY-y+"px"
+
+}
+
+document.onmouseup=function(){
+
+document.onmousemove=null
+
+}
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
+```
+
